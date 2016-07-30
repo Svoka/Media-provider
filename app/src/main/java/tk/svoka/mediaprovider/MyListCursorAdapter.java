@@ -20,8 +20,8 @@ public class MyListCursorAdapter extends CursorRecyclerViewAdapter<MyListCursorA
 
     private Context context;
 
-    public MyListCursorAdapter(Context context,Cursor cursor){
-        super(context,cursor);
+    public MyListCursorAdapter(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy){
+        super(context, uri, projection, selection, selectionArgs, orderBy);
         this.context=context;
     }
 

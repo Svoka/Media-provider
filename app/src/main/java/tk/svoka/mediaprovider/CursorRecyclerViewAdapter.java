@@ -2,10 +2,12 @@ package tk.svoka.mediaprovider;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
@@ -14,39 +16,73 @@ import android.util.Log;
 
 public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
-    private Context mContext;
-    private Cursor mCursor;
-    private boolean mDataValid;
-    private int mRowIdColumn;
-    private CursorContentObserver mDataSetObserver;
+    private Context context;
+    private Cursor cursor;
+    private int rowIdColumn;
+    private CursorContentObserver contentObserver;
+    Uri uri;
+    String[] projection;
+    String selection;
+    String[] selectionArgs;
+    String orderBy;
 
-    public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
-        mContext = context;
-        mCursor = cursor;
-        mDataValid = cursor != null;
-        mRowIdColumn = mDataValid ? mCursor.getColumnIndex("_id") : -1;
-        mDataSetObserver = new CursorContentObserver();
-        if (mCursor != null) {
-            mCursor.registerContentObserver(mDataSetObserver);
+
+    public CursorRecyclerViewAdapter(
+            Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy
+    ){
+
+
+        this.context = context;
+        this.uri = uri;
+        this.projection = projection;
+        this.selection = selection;
+        this.selectionArgs=selectionArgs;
+        this.orderBy = orderBy;
+        createCursor();
+
+
+
+
+    }
+
+    private void createCursor(){
+        if(cursor!=null){
+            if(contentObserver!=null){
+                cursor.unregisterContentObserver(contentObserver);
+            }
+            cursor.close();
         }
+
+
+       cursor =  MediaStore.Images.Media.query(
+                context.getContentResolver(),
+                uri,
+                projection,
+                selection,
+                selectionArgs,
+                orderBy
+        );
+        if (cursor != null) {
+            this.rowIdColumn =  cursor.getColumnIndex("_id");
+            this.contentObserver = new CursorContentObserver();
+            cursor.registerContentObserver(contentObserver);
+        }
+        notifyRecyclerOnChanges();
     }
 
-    public Cursor getCursor() {
-        return mCursor;
-    }
 
     @Override
     public int getItemCount() {
-        if (mDataValid && mCursor != null) {
-            return mCursor.getCount();
+        if (cursor != null) {
+            return cursor.getCount();
         }
         return 0;
     }
 
     @Override
     public long getItemId(int position) {
-        if (mDataValid && mCursor != null && mCursor.moveToPosition(position)) {
-            return mCursor.getLong(mRowIdColumn);
+        if (cursor != null && cursor.moveToPosition(position)) {
+            return cursor.getLong(rowIdColumn);
         }
         return 0;
     }
@@ -60,39 +96,20 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(VH viewHolder, int position) {
-        if (!mDataValid) {
-            throw new IllegalStateException("this should only be called when the cursor is valid");
-        }
-        if (!mCursor.moveToPosition(position)) {
+//        if (!mDataValid) {
+//            throw new IllegalStateException("this should only be called when the cursor is valid");
+//        }
+        if (!cursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
-        onBindViewHolder(viewHolder, mCursor);
+        onBindViewHolder(viewHolder, cursor);
     }
 
 
 
-    public void swapCursor(Cursor newCursor) {
-        if (newCursor == mCursor) {
-            return;
-        }
-        final Cursor oldCursor = mCursor;
-        if (oldCursor != null && mDataSetObserver != null) {
-            oldCursor.unregisterContentObserver(mDataSetObserver);
-            oldCursor.close();
-        }
-        mCursor = newCursor;
-        if (mCursor != null) {
-            if (mDataSetObserver != null) {
-                mCursor.registerContentObserver(mDataSetObserver);
-            }
-            mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
-            notifyRecyclerOnChanges();
-        }
-
-    }
 
     private void notifyRecyclerOnChanges(){
-        Activity activity = (Activity) mContext;
+        Activity activity = (Activity) context;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -111,15 +128,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
 
-            Activity activity = (Activity) mContext;
-            final String[] projectionPhotos = {
-                    MediaStore.Images.Media._ID,
-            };
-
-
-            Cursor cursor = MediaStore.Images.Media.query(activity.getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projectionPhotos, null, null, MediaStore.Images.Media.DATE_TAKEN + " DESC");
-            swapCursor(cursor);
-
+            createCursor();
 
 
             Log.e("CURSOR","CONTENT CHANGED");

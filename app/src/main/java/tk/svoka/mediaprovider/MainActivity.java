@@ -9,12 +9,12 @@ import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String[] projectionPhotos = {
+
+
+
+    private static final String[] fieldsToSelect = {
             MediaStore.Images.Media._ID,
     };
-
-
-    //private Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +23,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Cursor cursor = MediaStore.Images.Media.query(getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projectionPhotos, null, null, MediaStore.Images.Media.DATE_TAKEN + " DESC");
+
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.list);
-        recyclerView.setAdapter(new MyListCursorAdapter(this,cursor));
+        recyclerView.setAdapter(new MyListCursorAdapter(
+                this,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                fieldsToSelect,
+                null,
+                null,
+                MediaStore.Images.Media.DATE_TAKEN + " DESC"
+        ));
 
 
 
