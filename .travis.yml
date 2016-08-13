@@ -19,6 +19,7 @@ script: "./gradlew build"
 notifications:
   email: false
 
+travis setup releases
 deploy:
       provider: releases
       file: "/app/build/outputs/app-release.apk"
