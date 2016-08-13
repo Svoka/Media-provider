@@ -19,7 +19,7 @@ script: "./gradlew build"
 notifications:
   email: false
 
-travis setup releases
+
 deploy:
       provider: releases
       api_key: ""
