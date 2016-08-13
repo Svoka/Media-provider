@@ -14,6 +14,7 @@ android:
 # as per http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 sudo: false
 
+script: "./gradlew build"
 
 notifications:
   email: false
@@ -23,3 +24,5 @@ cache:
   directories:
   - $HOME/.m2
   - $HOME/.gradle
+  
+  
