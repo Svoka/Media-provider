@@ -20,12 +20,12 @@ notifications:
   email: false
 
 
-deploy:
-      provider: releases
-      api_key: ""
-      file: "/app/build/outputs/app-release.apk"
-      skip_cleanup: true
-      on:
-        tags: true
+# deploy:
+#       provider: releases
+#       api_key: "OjZGed0plSsjZ6vGh0MWbDJmvvL3TDFX7KUpISDYMnBNaIwSGYkq5FPJ6VPACfxo+InC1hDjcKbjiNnkwLzLnVqK23BcTR4ylsbAU8Tid5Zj5JR3+HpRpYdro+7398lw6E1AWmxvbPWoFMDTU12OcGXU8vxRcKjA7dyrar2O3ROy13wFlNcQy2wPfm+pg+6Xn3Omg6fY92E51fVacP0OSDHQHrFR1WCNa8IAKRKVCbbioSD7oZ4514VqBZr8NbyS8N8ic5VS9v81lRH7emLYVSqFcly/EKcgAo8PVrAYwxBYvIfAxGyNOI6mlK3E4PCLGeDFY/q4Jfq5b/CJvL6/lY7s/UdZPicz8Qp0y8L2WdX3p3YOPkVSCjwW+dEUG/KoOwzJpy9T3D+FlwAyPzH7zVOrBw5BZaScfgWjaUATVqb0GVjv06aYQrkixKrWW5975KXAhmGnVuXZzbDhIXioA3gvOCj8XMjOhynX1mWV1E5UMt+RREXCzpNB2WluybCvVMKucv9uJpsANIcePexg5tORTYYY25/3UBTs6q/v6TyM/iIuHs9iCC/hiqUOPRLMatMB9SjXHGV6/GSBTw0X5l8AATe75bVYhFjAeiFjLZEhj3hd0f/NaX6H3I6ICQjBjO5NJhi9MzT9GBzPZ2ThMUnStXwcTQIB65cKxrufVq0="
+#       file: "/app/build/outputs/app-release.apk"
+#       skip_cleanup: true
+#       on:
+#         tags: true
   
   
